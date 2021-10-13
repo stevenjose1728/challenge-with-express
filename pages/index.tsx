@@ -1,9 +1,12 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useSelector } from 'react-redux'
+import { RootState } from 'reducers'
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
+  const user = useSelector((state: RootState) => state.user)
   return (
     <div className={styles.container}>
       <Head>
