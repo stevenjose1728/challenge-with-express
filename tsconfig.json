@@ -22,6 +22,8 @@
       "reducers": ["./reducers"],
       "store": ["./store"],
       "styles": ["./styles"],
+      "utils": ["./utils"],
+      "services": ["./services"],
     }
   },
   "include": [
