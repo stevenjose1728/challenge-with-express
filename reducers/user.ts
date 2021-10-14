@@ -1,9 +1,9 @@
-import {User} from '../../models'
+import {User} from '../models'
 type Action = {
     payload: User | null,
     type: 'SET_PLAN' | 'REMOVE_PLAN'
 }
-export default function(state: User | null = null, action: Action): User | null {
+function reducer(state: User | null = null, action: Action): User | null {
 	switch(action.type) {
 		case 'SET_PLAN':
             return action.payload;
@@ -13,3 +13,5 @@ export default function(state: User | null = null, action: Action): User | null 
         	return state;
 	}
 }
+
+export default reducer
