@@ -1,7 +1,6 @@
 import axios, {AxiosError, AxiosResponse ,AxiosInstance} from 'axios';
 // import {store} from 'store'
-const baseURL = process.env.NEXT_API_URL;
-
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 let _axios: AxiosInstance = axios.create({
   baseURL,
 });
