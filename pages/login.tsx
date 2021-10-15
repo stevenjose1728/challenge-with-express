@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import {AuthParams} from 'models'
 import {setLoading, quitLoading, showSuccess, showError} from 'utils'
@@ -12,12 +12,13 @@ import { AuthService } from 'services';
 function Login() {
     const router = useRouter();
     const user = useSelector((state: RootState) => state.user)
+    const dispatch = useDispatch()
     useEffect(() => {
         // redirect to home if already logged in
         if (user) {
             router.push('/');
         }
-    }, []);
+    }, [user]);
 
     // form validation rules 
     const validationSchema = Yup.object().shape({
@@ -31,25 +32,26 @@ function Login() {
     const { errors } = formState;
 
     const onSubmit = async (form: AuthParams) => {
-        console.log('>>: any > ', form)
         try {
             setLoading()
             const res = await AuthService.login(form)
-            console.log('>>: res > ', res)
+            dispatch({
+                type: 'SET_USER',
+                payload: {
+                    ... res.user,
+                    token: {
+                        ... res,
+                        token: res.token
+                    }
+                }
+            })
+            router.push('/');
         } catch (error) {
-            setError('apiError', { message: error });
-            showError()
+            // setError('apiError', { message: error });
+            showError('Contraseña incorrecta')
         }finally{
             quitLoading()
         }
-        // return userService.login(email, password)
-        //     .then(() => {
-        //         // get return url from query parameters or default to '/'
-        //         const returnUrl = router.query.returnUrl || '/';
-        //         router.push(returnUrl);
-        //     })
-        //     .catch(error => {
-        //     });
     }
 
     return (
@@ -59,7 +61,7 @@ function Login() {
                 Password: 123456
             </div>
             <div className="card">
-                <h4 className="card-header">Next.js JWT Login Example</h4>
+                <h4 className="card-header">Challenge</h4>
                 <div className="card-body">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-group">
