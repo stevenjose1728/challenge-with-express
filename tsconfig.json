@@ -24,6 +24,7 @@
       "styles": ["./styles"],
       "utils": ["./utils"],
       "services": ["./services"],
+      "widgets": ["./widgets"],
     }
   },
   "include": [
