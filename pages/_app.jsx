@@ -9,6 +9,7 @@ import { Nav } from '../widgets';
 import { Provider } from 'react-redux';
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../utils/react-hold-on/src/css/react-hold-on.css';
 import '../styles/globals.css'
 
