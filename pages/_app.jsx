@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Nav } from '../widgets';
 import { Provider } from 'react-redux';
-
+import {on} from 'jetemit'
 import "bootstrap/dist/css/bootstrap.min.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../utils/react-hold-on/src/css/react-hold-on.css';
@@ -18,12 +18,15 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const user = useSelector(state => state.user)
   useEffect(() => {
-      if(!user && router.pathname !== '/login'){
-        router.push({
-            pathname: '/login',
-        });
-      }
-  }, []);
+        on("GET-USER", () => {
+            return user
+        })
+        if(!user && router.pathname !== '/login'){
+            router.push({
+                pathname: '/login',
+            });
+        }
+  }, [user]);
   return (
     <Provider store={store}>
         <PersistGate persistor={store.__persistor} loading={null}>
