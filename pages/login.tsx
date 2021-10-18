@@ -39,10 +39,7 @@ function Login() {
                 type: 'SET_USER',
                 payload: {
                     ... res.user,
-                    token: {
-                        ... res,
-                        token: res.token
-                    }
+                    token: res.token
                 }
             })
             router.push('/');
