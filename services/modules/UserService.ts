@@ -33,6 +33,19 @@ class UserService {
     });
   }
 
+  static update = (user: UserForm): Promise<DefaultResponse> => {
+    return new Promise((resolve, reject) => {
+      axios
+      .patch(`users/${user.id}`, user)
+      .then(
+        (response: AxiosResponse) =>
+          resolve(response.data),
+        (error: AxiosError<DefaultError>) =>
+          reject(error?.response?.data)
+      );
+    });
+  }
+
 }
 
 export {
