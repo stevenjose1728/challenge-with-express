@@ -8,6 +8,7 @@ interface PropsButton {
 	type?:"button" | "submit" | "reset",
 	disabled?: boolean
     icon?: string
+    small?: boolean
 }
 
 
@@ -15,7 +16,7 @@ const _Button:React.FC<PropsButton>  = (props: PropsButton) => {
 	return (
         <button
             disabled={props.disabled}
-            className={'btn btn-'+(props.className || 'primary')}
+            className={'btn btn-'+(props.className || 'primary') + (props.small ? 'btn-sm' : '')}
             onClick={props.onClick}
             type={props.type || 'button'}
         >
