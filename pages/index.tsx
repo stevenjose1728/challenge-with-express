@@ -6,29 +6,33 @@ import { RootState } from 'reducers'
 import styles from '../styles/Home.module.css'
 import { Button, Input, Modal, Select, Table } from 'components'
 import { DefaultError, User } from 'models'
-import { quitLoading, setLoading, showError, showSuccess } from 'utils'
+import { quitLoading, ROLES, setLoading, showError, showSuccess } from 'utils'
 import { UserService } from 'services'
 
 type UserForm = User & {
   password: string,
   password_confirmation: string
+  edit?: boolean
 }
 const Home: NextPage = () => {
+  const defaultPw = {
+    password: '',
+    password_confirmation: ''
+  }
   const user = useSelector((state: RootState) => state.user)
   const [users, setUsers] = React.useState<User[]>([])
   const [visible, setVisible] = React.useState<boolean>(false)
   const [form, setForm] = React.useState<UserForm>({
     name: '',
     email: '',
-    role: 3,
-    password: '',
-    password_confirmation: ''
+    role: ROLES.user,
+    ... defaultPw
   })
   const load = async () => {
     try {
       setLoading()
       const res = await UserService.getAll()
-      console.log('>>: res > ', res)
+      setUsers(res)
     } catch (error) {
       showError()
     }finally{
@@ -53,14 +57,47 @@ const Home: NextPage = () => {
     e.preventDefault()
     try {
       setLoading()
-      const res = await UserService.create(form)
-      showSuccess(res.msg)
+      let msg = ''
+      switch (form.edit) {
+        case true:
+          const edit = await UserService.update(form)
+          msg = edit.msg
+          break;
+      
+        default:
+          if(user?.isAdmin){
+            const res = await UserService.create(form)
+            msg = res.msg
+          }
+          break;
+      }
+      showSuccess(msg)
       close()
     } catch (error) {
       console.log('>>: error > ', error)
       showError(error?.message)
     }finally{
       quitLoading()
+    }
+  }
+  const editUser = (element: User) => {
+    const _form: UserForm = {
+      ... defaultPw,
+      ... element,
+      edit: true
+    }
+    setForm(_form)
+    setVisible(true)
+  }
+  const getRoleNameById = (role: number) => {
+    switch (role) {
+      case ROLES.admin:
+        return 'Administrador'
+        break;
+    
+      default:
+        return 'Usuario'
+        break;
     }
   }
   return (
@@ -107,11 +144,11 @@ const Home: NextPage = () => {
                   options={[
                     {
                       label: 'Administrador',
-                      value: 2
+                      value: ROLES.admin
                     },
                     {
                       label: 'Usuario',
-                      value: 3
+                      value: ROLES.user
                     },
                   ]}
                 />
@@ -144,52 +181,50 @@ const Home: NextPage = () => {
           </div>
         </form>
       </Modal>
-      <Table
-          header={
-              ['#', 'Nombre', 'Telefono', 'Email', 'Acciones']
-          }
-          data={users.length}
-          title="Usuarios"
-          right={
-              <Button
-                  icon="plus"
-                  className="primary"
-                  small
-                  onClick={() => setVisible(true)}
-              />
-          }
-      >
-          {
-              users?.map((element, i) => {
-                  return(
-                      <tr key={ i }>
-                          <th scope="row">{ element.id }</th>
-                          <td> {element.name} </td>
-                          <td> {element.email} </td>
-                          <td>
-                              {/* <Button
-                                  icon="eye"
-                                  onClick={() => viewUser(element)}
-                                  small
-                              />
-                              <Button
-                                  icon="edit"
-                                  className="info text-white"
-                                  onClick={() => editUser(element)}
-                                  small
-                              />
-                              <Button
-                                  icon="trash"
-                                  className="danger text-white"
-                                  onClick={() => deleteUser(element)}
-                                  small
-                              /> */}
-                          </td>
-                      </tr>
-                  )
-              })
-          }
-      </Table>
+      <div className="w-100 text-center">
+        <Table
+            header={
+                ['#', 'Nombre', 'Email', 'Rol', 'Acciones']
+            }
+            data={users.length}
+            title="Usuarios"
+            right={
+                <Button
+                    icon="plus"
+                    className="primary"
+                    small
+                    onClick={() => setVisible(true)}
+                />
+            }
+        >
+            {
+                users?.map((element, i) => {
+                    return(
+                        <tr key={ i }>
+                            <th scope="row">{ element.id }</th>
+                            <td> {element.name} </td>
+                            <td> {element.email} </td>
+                            <td> {getRoleNameById(element.role)} </td>
+                            <td>
+                                <Button
+                                    icon="edit"
+                                    className="info text-white"
+                                    onClick={() => editUser(element)}
+                                    small
+                                />
+                                <Button
+                                    icon="trash"
+                                    className="danger text-white"
+                                    onClick={() => deleteUser(element)}
+                                    small
+                                />
+                            </td>
+                        </tr>
+                    )
+                })
+            }
+        </Table>
+      </div>
     </div>
   )
 }
