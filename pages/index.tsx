@@ -19,15 +19,16 @@ const Home: NextPage = () => {
     password: '',
     password_confirmation: ''
   }
-  const user = useSelector((state: RootState) => state.user)
-  const [users, setUsers] = React.useState<User[]>([])
-  const [visible, setVisible] = React.useState<boolean>(false)
-  const [form, setForm] = React.useState<UserForm>({
+  const defaultUserForm = {
     name: '',
     email: '',
     role: ROLES.user,
     ... defaultPw
-  })
+  }
+  const user = useSelector((state: RootState) => state.user)
+  const [users, setUsers] = React.useState<User[]>([])
+  const [visible, setVisible] = React.useState<boolean>(false)
+  const [form, setForm] = React.useState<UserForm>(defaultUserForm)
   const load = async () => {
     try {
       setLoading()
@@ -41,6 +42,7 @@ const Home: NextPage = () => {
   }
   const close = () => {
     setVisible(false)
+    setForm(defaultUserForm)
     load()
   }
   const handleForm = (key: keyof UserForm, value: string) =>{
@@ -100,8 +102,17 @@ const Home: NextPage = () => {
         break;
     }
   }
-  const deleteUser = (element: User) => {
-    console.log('>>: delete user > ', element)
+  const deleteUser = async (element: User) => {
+    try {
+      setLoading()
+      const res = await UserService.delete(element)
+      showSuccess(res.msg)
+      load()
+    } catch (error) {
+      showError()
+    }finally{
+      quitLoading()
+    }
   }
   return (
     <div className={styles.container}>

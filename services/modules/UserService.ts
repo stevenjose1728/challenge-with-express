@@ -46,6 +46,19 @@ class UserService {
     });
   }
 
+  static delete = (user: User): Promise<DefaultResponse> => {
+    return new Promise((resolve, reject) => {
+      axios
+      .delete(`users/${user.id}`)
+      .then(
+        (response: AxiosResponse) =>
+          resolve(response.data),
+        (error: AxiosError<DefaultError>) =>
+          reject(error?.response?.data)
+      );
+    });
+  }
+
 }
 
 export {
