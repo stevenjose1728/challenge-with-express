@@ -46,6 +46,19 @@ class UserService {
     });
   }
 
+  static updateUser = (user: UserForm): Promise<DefaultResponse & {user: User}> => {
+    return new Promise((resolve, reject) => {
+      axios
+      .post(`users/profile`, user)
+      .then(
+        (response: AxiosResponse) =>
+          resolve(response.data),
+        (error: AxiosError<DefaultError>) =>
+          reject(error?.response?.data)
+      );
+    });
+  }
+
   static delete = (user: User): Promise<DefaultResponse> => {
     return new Promise((resolve, reject) => {
       axios

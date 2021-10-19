@@ -1,13 +1,14 @@
 import React from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'reducers'
 import styles from '../styles/Home.module.css'
-import { Button, Input, Modal, Select, Table } from 'components'
-import { DefaultError, User } from 'models'
+import { Button, Input, Modal, Select } from 'components'
+import { User } from 'models'
 import { quitLoading, ROLES, setLoading, showError, showSuccess } from 'utils'
 import { UserService } from 'services'
+import { UserTable, UserEditProfile } from 'widgets'
 
 type UserForm = User & {
   password: string,
@@ -25,19 +26,22 @@ const Home: NextPage = () => {
     role: ROLES.user,
     ... defaultPw
   }
+  const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user)
   const [users, setUsers] = React.useState<User[]>([])
   const [visible, setVisible] = React.useState<boolean>(false)
   const [form, setForm] = React.useState<UserForm>(defaultUserForm)
   const load = async () => {
-    try {
-      setLoading()
-      const res = await UserService.getAll()
-      setUsers(res)
-    } catch (error) {
-      showError()
-    }finally{
-      quitLoading()
+    if(user?.isAdmin){
+      try {
+        setLoading()
+        const res = await UserService.getAll()
+        setUsers(res)
+      } catch (error) {
+        showError()
+      }finally{
+        quitLoading()
+      }
     }
   }
   const close = () => {
@@ -60,18 +64,34 @@ const Home: NextPage = () => {
     try {
       setLoading()
       let msg = ''
-      switch (form.edit) {
-        case true:
-          const edit = await UserService.update(form)
-          msg = edit.msg
-          break;
-      
-        default:
-          if(user?.isAdmin){
+      if(!!!user?.isAdmin){
+        let _form = {
+          ... form
+        }
+        delete _form.token
+        const editUser = await UserService.updateUser(_form)
+        const payload =  {
+          ... user,
+          ... editUser.user
+        }
+        console.log('>>: payload > ', payload)
+        dispatch({
+          type: 'SET_USER',
+          payload
+        })
+        msg = editUser.msg
+      }else{
+        switch (!!user?.isAdmin) {
+          case true:
+            const edit = await UserService.update(form)
+            msg = edit.msg
+            break;
+
+          default:
             const res = await UserService.create(form)
             msg = res.msg
-          }
-          break;
+            break;
+        }
       }
       showSuccess(msg)
       close()
@@ -82,11 +102,11 @@ const Home: NextPage = () => {
       quitLoading()
     }
   }
-  const editUser = (element: User) => {
+  const editUser = (element: User, edit = false) => {
     const _form: UserForm = {
       ... defaultPw,
       ... element,
-      edit: true
+      edit
     }
     setForm(_form)
     setVisible(true)
@@ -148,25 +168,28 @@ const Home: NextPage = () => {
                   label="Email"
                 />
               </div>
-              <div className="col-12">
-                <Select
-                  name="role"
-                 
-                  onChange={(value: string) => handleForm('role', value)}
-                  value={form.role}
-                  label="Rol de usuario"
-                  options={[
-                    {
-                      label: 'Administrador',
-                      value: ROLES.admin
-                    },
-                    {
-                      label: 'Usuario',
-                      value: ROLES.user
-                    },
-                  ]}
-                />
-              </div>
+              {
+                user?.isAdmin && (
+                  <div className="col-12">
+                    <Select
+                      name="role"
+                      onChange={(value: string) => handleForm('role', value)}
+                      value={form.role}
+                      label="Rol de usuario"
+                      options={[
+                        {
+                          label: 'Administrador',
+                          value: ROLES.admin
+                        },
+                        {
+                          label: 'Usuario',
+                          value: ROLES.user
+                        },
+                      ]}
+                    />
+                  </div>
+                )
+              }
               <div className="col-md-6 col-sm-12">
                 <Input
                   name="password"
@@ -196,48 +219,21 @@ const Home: NextPage = () => {
         </form>
       </Modal>
       <div className="w-100 text-center">
-        <Table
-            header={
-                ['#', 'Nombre', 'Email', 'Rol', 'Acciones']
-            }
-            data={users.length}
-            title="Usuarios"
-            right={
-                <Button
-                    icon="plus"
-                    className="primary"
-                    small
-                    onClick={() => setVisible(true)}
-                />
-            }
-        >
-            {
-                users?.map((element, i) => {
-                    return(
-                        <tr key={ i }>
-                            <th scope="row">{ element.id }</th>
-                            <td> {element.name} </td>
-                            <td> {element.email} </td>
-                            <td> {getRoleNameById(element.role)} </td>
-                            <td>
-                                <Button
-                                    icon="edit"
-                                    className="info text-white"
-                                    onClick={() => editUser(element)}
-                                    small
-                                />
-                                <Button
-                                    icon="trash"
-                                    className="danger text-white"
-                                    onClick={() => deleteUser(element)}
-                                    small
-                                />
-                            </td>
-                        </tr>
-                    )
-                })
-            }
-        </Table>
+        {
+          user?.isAdmin
+          ?
+            <UserTable
+              users={users}
+              setVisible={(param: boolean) => setVisible(param)}
+              getRoleNameById={(role: number) => getRoleNameById(role)}
+              editUser={(element: User) => editUser(element)}
+              deleteUser={(element: User) => deleteUser(element)}
+            />
+          :
+          <UserEditProfile
+            editProfile={() => !!user && editUser(user, true)}
+          />
+        }
       </div>
     </div>
   )
