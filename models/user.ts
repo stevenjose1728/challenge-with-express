@@ -4,5 +4,6 @@ export type User = {
     email: string,
     id?: number,
     role: typeof ROLES.admin | typeof ROLES.user,
-    isAdmin?: boolean
+    isAdmin?: boolean,
+    token?: string
 }
