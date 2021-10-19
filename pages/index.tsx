@@ -100,6 +100,9 @@ const Home: NextPage = () => {
         break;
     }
   }
+  const deleteUser = (element: User) => {
+    console.log('>>: delete user > ', element)
+  }
   return (
     <div className={styles.container}>
       <Head>
