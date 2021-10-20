@@ -1,3 +1,3 @@
 export type DefaultResponse = {
-    msg: string
+    message: string
 }
