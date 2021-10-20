@@ -9,9 +9,9 @@ import { quitLoading, setLoading, showError, showSuccess } from 'utils'
 
 export default function accounts() {
     const defaultAccountState: Account = {
-        created_at: '',
-        updated_at: '',
-        deleted_at: null,
+        createdAt: '',
+        updatedAt: '',
+        deletedAt: null,
         name: '',
         teamConsultation: '',
         responsableId: 0,
@@ -24,7 +24,13 @@ export default function accounts() {
     const [form, setForm] = React.useState<Account>(defaultAccountState)
     const router = useRouter()
     const handleEdit = (element: Account) => {
-        console.log('>>: handleEdit > ', element)
+        let _element = {... element}
+        if(_element.responsable)
+            delete _element.responsable
+        if(_element.user)
+            delete _element.user
+        setForm(_element)
+        setVisible(true)
     }
     const handleDelete = (element: Account) => {
         console.log('>>: handleDelete > ', element)
@@ -35,7 +41,7 @@ export default function accounts() {
             const res = await AccountService.getAll()
             const users = await UserService.getAll()
             setForm({
-                ... form,
+                ... defaultAccountState,
                 userId: users?.[0]?.id || 0,
                 responsableId: users?.[0]?.id || 0
             })
@@ -56,6 +62,7 @@ export default function accounts() {
         }
     }, [user])
     const handleClose = () => {
+        setForm(defaultAccountState)
         load()
         setVisible(false)
     }
