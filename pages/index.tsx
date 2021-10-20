@@ -78,17 +78,17 @@ const Home: NextPage = () => {
           type: 'SET_USER',
           payload
         })
-        msg = editUser.msg
+        msg = editUser.message
       }else{
         switch (!!user?.isAdmin) {
           case true:
             const edit = await UserService.update(form)
-            msg = edit.msg
+            msg = edit.message
             break;
 
           default:
             const res = await UserService.create(form)
-            msg = res.msg
+            msg = res.message
             break;
         }
       }
