@@ -7,7 +7,7 @@ export type Account = {
     teamConsultation: string,
     responsableId: number,
     responsable?: User,
-    created_at: string | null,
-    updated_at: string | null,
-    deleted_at: string | null
+    createdAt: string | null,
+    updatedAt: string | null,
+    deletedAt: string | null
 }
