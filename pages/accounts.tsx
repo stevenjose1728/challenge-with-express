@@ -5,7 +5,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from 'reducers'
 import { AccountService, UserService } from 'services'
-import { quitLoading, setLoading, showError } from 'utils'
+import { quitLoading, setLoading, showError, showSuccess } from 'utils'
 
 export default function accounts() {
     const defaultAccountState: Account = {
@@ -67,7 +67,10 @@ export default function accounts() {
             try {
                 setLoading()
                 const res = await AccountService.save(form)
-                console.log('>>: res > ', res)
+                showSuccess(res.message)
+                load()
+                handleClose()
+                setForm(defaultAccountState)
             } catch (error) {
                 showError()
             }finally{
