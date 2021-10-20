@@ -74,7 +74,6 @@ const Home: NextPage = () => {
           ... user,
           ... editUser.user
         }
-        console.log('>>: payload > ', payload)
         dispatch({
           type: 'SET_USER',
           payload
