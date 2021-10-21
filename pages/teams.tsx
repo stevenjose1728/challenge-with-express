@@ -37,11 +37,21 @@ export default function teams() {
       setForm(_form)
       setVisible(true)
     }
-    const handleDelete = (element: Team) => {
-      console.log('>>: delete > ', element)
+    const handleDelete = async (element: Team) => {
+      try {
+        setLoading()
+        const res = await TeamService.delete(element.id)
+        showSuccess(res.message)
+        load()
+      } catch (error) {
+        showError()
+      }finally{
+        quitLoading()
+      }
     }
     const handleClose = () => {
       setVisible(false)
+      setForm(defaultFormState)
       load()
     }
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -67,7 +77,6 @@ export default function teams() {
       }finally{
         quitLoading()
       }
-      console.log('on submit')
     }
     const handleChange = (name: string) => {
       const _form = {
