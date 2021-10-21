@@ -2,11 +2,19 @@ import React from 'react'
 import { Team } from 'models'
 import { quitLoading, setLoading, showError } from 'utils'
 import { TeamService } from 'services'
-import { Button, Modal, Table } from 'components'
+import { Button, Input, Modal, Table } from 'components'
 
+type Form = {
+  name: string,
+  id?: number
+}
 export default function teams() {
+    const defaultFormState: Form = {
+      name: ''
+    }
     const [teams, setTeams] = React.useState<Team[]>([])
     const [visible, setVisible] = React.useState<boolean>(false)
+    const [form, setForm] = React.useState<Form>(defaultFormState)
     const load = async () => {
         try {
             setLoading()
@@ -35,15 +43,32 @@ export default function teams() {
       e.preventDefault()
       console.log('on submit')
     }
+    const handleChange = (name: string) => {
+      const _form = {
+        name
+      }
+      setForm(_form)
+    }
     return (
       <>
         <Modal
           visible={visible}
           onClose={handleClose}
+          title='Crear/Editar Equipos'
         >
           <form onSubmit={handleSubmit}>
-
-
+            <div className="container">
+              <Input
+                name="name"
+                value={form.name}
+                onChange={(value: string) => handleChange(value)}
+                label="Nombre"
+              />
+              <Button
+                label="Guardar"
+                type="submit"
+              />
+            </div>
           </form>
         </Modal>
         <Table
