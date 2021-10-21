@@ -31,10 +31,13 @@ class TeamService {
     });
   }
 
-  static update = (form: Team): Promise<DefaultResponse> => {
+  static update = (name: string, id: number): Promise<DefaultResponse> => {
     return new Promise((resolve, reject) => {
       axios
-      .patch(END_POINT, form)
+      .patch(END_POINT, {
+        name,
+        id
+      })
       .then(
         (response: AxiosResponse) =>
           resolve(response.data),

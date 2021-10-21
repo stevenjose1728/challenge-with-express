@@ -30,10 +30,11 @@ export default function teams() {
         load()
     }, [])
     const handleEdit = (element: Team) => {
-      setForm({
+      const _form = {
         name: element.name,
         id: element.id
-      })
+      }
+      setForm(_form)
       setVisible(true)
     }
     const handleDelete = (element: Team) => {
@@ -50,9 +51,16 @@ export default function teams() {
         if(!form.name){
           showError('Debe llenar el nombre del equipo')
         }else{
-           const res = await TeamService.save(form.name)
-           showSuccess(res.message)
-           handleClose()
+          let msg = ''
+          if(form.id){
+            const update = await TeamService.update(form.name, form.id)
+            msg = update.message
+          }else{
+            const res = await TeamService.save(form.name)
+            msg = res.message
+          }
+          showSuccess(msg)
+          handleClose()
         }
       } catch (error) {
         showError()
@@ -63,6 +71,7 @@ export default function teams() {
     }
     const handleChange = (name: string) => {
       const _form = {
+        ... form,
         name
       }
       setForm(_form)
