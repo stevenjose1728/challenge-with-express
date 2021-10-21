@@ -32,7 +32,19 @@ export default function accounts() {
         setForm(_element)
         setVisible(true)
     }
-    const handleDelete = (element: Account) => {
+    const handleDelete = async (element: Account) => {
+        try {
+            setLoading()
+            if(element.id){
+                const res = await AccountService.delete(element.id)
+                console.log('>>: res > ', res)
+                showSuccess(res.message)
+            }
+        } catch (error) {
+            showError()
+        }finally{
+            quitLoading()
+        }
         console.log('>>: handleDelete > ', element)
     }
     const load = async () => {

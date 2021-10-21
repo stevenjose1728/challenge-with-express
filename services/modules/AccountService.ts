@@ -42,6 +42,19 @@ class AccountService {
     });
   }
 
+  static delete = (id: number): Promise<DefaultResponse> => {
+    return new Promise((resolve, reject) => {
+      axios
+      .delete('accounts/'+id)
+      .then(
+        (response: AxiosResponse) =>
+          resolve(response.data),
+        (error: AxiosError) =>
+          reject(error)
+      );
+    });
+  }
+
 }
 
 export {
