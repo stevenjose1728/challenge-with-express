@@ -12,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../utils/react-hold-on/src/css/react-hold-on.css';
 import '../styles/globals.css'
+import 'styles/Datepicker.css'
 
 function MyApp({ Component, pageProps }) {
   const store = useStore((state) => state);

@@ -2,7 +2,7 @@ import React from 'react'
 import { Movement, Team, User, MovementParams as Form } from 'models'
 import { quitLoading, setLoading, showError } from 'utils'
 import { MovementService, TeamService, UserService } from 'services'
-import { Button, Modal, Select, Table } from 'components'
+import { Button, Datepicker, Modal, Select, Table } from 'components'
 import moment from 'moment'
 
 export default function movements() {
@@ -90,7 +90,29 @@ export default function movements() {
                                 onChange={(value: string) => handleChange('teamId', parseInt(value))}
                             />
                         </div>
+                        <div className="col-md-6 col-sm-12">
+                            <Datepicker
+                                onChange={(value: Date) => handleChange('since', value)}
+                                value={form.since}
+                                labelColor="text-dark"
+                                label="Desde"
+                                minDate={moment().toDate()}
+                            />
+                        </div>
+                        <div className="col-md-6 col-sm-12">
+                            <Datepicker
+                                onChange={(value: Date) => handleChange('until', value)}
+                                value={form.until}
+                                label="Hasta"
+                                labelColor="text-dark"
+                                minDate={moment().toDate()}
+                            />
+                        </div>
                     </div>
+                    <Button
+                        label="Guardar"
+                        type="submit"
+                    />
                 </div>
             </Modal>
             <Table
