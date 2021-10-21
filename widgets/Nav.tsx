@@ -26,9 +26,14 @@ function Nav() {
                 <a onClick={logout} className="nav-item nav-link">Logout</a>
                 {
                     !!user && user.isAdmin && (
-                        <NavLink href="/accounts" exact className="nav-item nav-link">
-                            <p>Cuentas</p>
-                        </NavLink>
+                        <>
+                            <NavLink href="/accounts" exact className="nav-item nav-link">
+                                <p>Cuentas</p>
+                            </NavLink>
+                            <NavLink href="/teams" exact className="nav-item nav-link">
+                                <p>Equipos</p>
+                            </NavLink>
+                        </>
                     )
                 }
             </div>
