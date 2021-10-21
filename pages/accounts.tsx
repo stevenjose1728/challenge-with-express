@@ -73,8 +73,15 @@ export default function accounts() {
         }else{
             try {
                 setLoading()
-                const res = await AccountService.save(form)
-                showSuccess(res.message)
+                let msg = ''
+                if(form.id){
+                    const update = await AccountService.update(form)
+                    msg = update.message
+                }else{
+                    const res = await AccountService.save(form)
+                    msg = res.message
+                }
+                showSuccess(msg)
                 load()
                 handleClose()
                 setForm(defaultAccountState)
@@ -132,7 +139,7 @@ export default function accounts() {
                                     label="Usuario"
                                     value={form.userId}
                                     onChange={(value: string) => handleForm('userId', parseInt(value))}
-                                    />
+                                />
                             </div>
                             <div className="col-md-6 col-sm-12">
                                 <Select

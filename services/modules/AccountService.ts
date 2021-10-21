@@ -29,6 +29,19 @@ class AccountService {
     });
   }
 
+  static update = (form: Account): Promise<DefaultResponse> => {
+    return new Promise((resolve, reject) => {
+      axios
+      .patch('accounts', form)
+      .then(
+        (response: AxiosResponse) =>
+          resolve(response.data),
+        (error: AxiosError) =>
+          reject(error)
+      );
+    });
+  }
+
 }
 
 export {
