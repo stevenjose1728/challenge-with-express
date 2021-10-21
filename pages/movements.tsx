@@ -64,7 +64,17 @@ export default function movements() {
         setForm(_form)
         setVisible(true)
     }
-    const handleDelete = (element: Movement) => {
+    const handleDelete = async (element: Movement) => {
+        try {
+            setLoading()
+            const res = await MovementService.delete(element.id)
+            load()
+            showSuccess(res.message)
+        } catch (error) {
+            showError()
+        }finally{
+            quitLoading()
+        }
         console.log('>>: delete > ')
     }
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -75,7 +85,6 @@ export default function movements() {
             }else{
                 setLoading()
                 let msg = ''
-                console.log('>>: form > ', form)
                 if(!form.id){
                     const res = await MovementService.save(form)
                     msg = res.message
