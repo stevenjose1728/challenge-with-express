@@ -13,7 +13,7 @@ const CustomInput = React.forwardRef<HTMLDivElement, CustomProps>(
   ({ color, value, text, onClick, hasError = undefined, placeholder='' }, ref) => (
     <div
       ref={ref}
-      className={`container-datepicker ${color ? color : ""} ${hasError ? 'is-invalid' : 'is-valid'}`}
+      className={`container-datepicker ${color || ""} ${hasError ? 'is-invalid' : 'is-valid'}`}
       onClick={onClick}
     >
       <input className="form-control" style={{border: 'none', backgroundColor: 'transparent'}} placeholder={placeholder} value={value || text || ''} />
