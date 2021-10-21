@@ -1,6 +1,6 @@
 import React from 'react'
 import { Team } from 'models'
-import { quitLoading, setLoading, showError } from 'utils'
+import { quitLoading, setLoading, showError, showSuccess } from 'utils'
 import { TeamService } from 'services'
 import { Button, Input, Modal, Table } from 'components'
 
@@ -30,7 +30,11 @@ export default function teams() {
         load()
     }, [])
     const handleEdit = (element: Team) => {
-      console.log('>> edit', element)
+      setForm({
+        name: element.name,
+        id: element.id
+      })
+      setVisible(true)
     }
     const handleDelete = (element: Team) => {
       console.log('>>: delete > ', element)
@@ -39,8 +43,22 @@ export default function teams() {
       setVisible(false)
       load()
     }
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
+      try {
+        setLoading()
+        if(!form.name){
+          showError('Debe llenar el nombre del equipo')
+        }else{
+           const res = await TeamService.save(form.name)
+           showSuccess(res.message)
+           handleClose()
+        }
+      } catch (error) {
+        showError()
+      }finally{
+        quitLoading()
+      }
       console.log('on submit')
     }
     const handleChange = (name: string) => {
@@ -73,7 +91,7 @@ export default function teams() {
         </Modal>
         <Table
             header={
-                ['#', 'Nombre', 'Consulta de equipo', 'Usuario', 'Responsable', 'Acciones']
+                ['#', 'Nombre', 'Acciones']
             }
             data={teams.length}
             title="Equipos"

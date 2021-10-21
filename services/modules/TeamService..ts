@@ -18,10 +18,10 @@ class TeamService {
     });
   }
 
-  static save = (form: Team): Promise<DefaultResponse> => {
+  static save = (name: string): Promise<DefaultResponse> => {
     return new Promise((resolve, reject) => {
       axios
-      .post(END_POINT, form)
+      .post(END_POINT, {name})
       .then(
         (response: AxiosResponse) =>
           resolve(response.data),
