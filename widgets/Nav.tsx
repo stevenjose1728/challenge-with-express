@@ -33,6 +33,9 @@ function Nav() {
                             <NavLink href="/teams" exact className="nav-item nav-link">
                                 <p>Equipos</p>
                             </NavLink>
+                            <NavLink href="/movements" exact className="nav-item nav-link">
+                                <p>Movimientos</p>
+                            </NavLink>
                         </>
                     )
                 }
