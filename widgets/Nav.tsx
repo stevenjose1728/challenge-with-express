@@ -36,6 +36,9 @@ function Nav() {
                             <NavLink href="/movements" exact className="nav-item nav-link">
                                 <p>Movimientos</p>
                             </NavLink>
+                            <NavLink href="/logs" exact className="nav-item nav-link">
+                                <p>Logs de Movimientos</p>
+                            </NavLink>
                         </>
                     )
                 }
