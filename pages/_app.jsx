@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }) {
     <Provider store={store}>
         <PersistGate persistor={store.__persistor} loading={null}>
             <Head>
-                <title>Next.js 11 - JWT Authentication Example</title>
+                <title>Next.js - Challenge</title>
             </Head>
             <div className="app-container bg-light">
                 {
