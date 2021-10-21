@@ -143,7 +143,7 @@ export default function movements() {
             </Modal>
             <Table
                 header={
-                    ['#', 'Nombre', 'Acciones']
+                    ['#', 'Usuario', 'Equipo', 'Desde', 'Hasta', 'Acciones']
                 }
                 data={teams.length}
                 title="Movimientos"
@@ -161,7 +161,10 @@ export default function movements() {
                         return(
                             <tr key={ i }>
                                 <th scope="row">{ element.id }</th>
-                                {/* <td> {element.name} </td> */}
+                                <td> {element.user?.name} </td>
+                                <td> {element.team?.name} </td>
+                                <td> {moment(element.since).format('DD-MM-YYYY HH:mm A')} </td>
+                                <td> {moment(element.until).format('DD-MM-YYYY HH:mm A')} </td>
                                 <td>
                                     <Button
                                         icon="edit"
