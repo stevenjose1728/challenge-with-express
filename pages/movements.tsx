@@ -2,7 +2,7 @@ import React from 'react'
 import { Movement, Team, User, MovementParams as Form } from 'models'
 import { quitLoading, setLoading, showError } from 'utils'
 import { MovementService, TeamService, UserService } from 'services'
-import { Modal, Select } from 'components'
+import { Button, Modal, Select, Table } from 'components'
 import moment from 'moment'
 
 export default function movements() {
@@ -47,11 +47,18 @@ export default function movements() {
         }
         setForm(_form)
     }
+    const handleEdit = (element: Movement) => {
+        console.log('>>: edit')
+    }
+    const handleDelete = (element: Movement) => {
+        console.log('>>: delete > ')
+    }
     return (
         <>
             <Modal
                 onClose={handleClose}
                 visible={visible}
+                title="Crear/Editar movimiento"
             >
                 <div className="container">
                     <div className="row">
@@ -71,21 +78,61 @@ export default function movements() {
                         </div>
                         <div className="col-md-6 col-sm-12">
                             <Select
-                                name="userId"
-                                value={form.userId}
-                                options={users.map(element => {
+                                name="teamId"
+                                value={form.teamId}
+                                options={teams.map(element => {
                                     return{
                                         label: element.name,
                                         value: element.id || ''
                                     }
                                 })}
                                 label="Equipo"
-                                onChange={(value: string) => handleChange('userId', parseInt(value))}
+                                onChange={(value: string) => handleChange('teamId', parseInt(value))}
                             />
                         </div>
                     </div>
                 </div>
             </Modal>
+            <Table
+                header={
+                    ['#', 'Nombre', 'Acciones']
+                }
+                data={teams.length}
+                title="Movimientos"
+                right={
+                    <Button
+                        icon="plus"
+                        className="primary"
+                        small
+                        onClick={() => setVisible(true)}
+                    />
+                }
+            >
+                {
+                    movements?.map((element, i) => {
+                        return(
+                            <tr key={ i }>
+                                <th scope="row">{ element.id }</th>
+                                {/* <td> {element.name} </td> */}
+                                <td>
+                                    <Button
+                                        icon="edit"
+                                        className="info text-white"
+                                        onClick={() => handleEdit(element)}
+                                        small
+                                    />
+                                    <Button
+                                        icon="trash"
+                                        className="danger text-white"
+                                        onClick={() => handleDelete(element)}
+                                        small
+                                    />
+                                </td>
+                            </tr>
+                        )
+                    })
+                }
+            </Table>
         </>
     )
 }
