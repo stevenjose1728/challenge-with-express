@@ -1,6 +1,6 @@
 import {axios} from 'utils';
 import {AxiosResponse, AxiosError} from 'axios'
-import { Movement, DefaultResponse } from 'models';
+import { Movement, DefaultResponse, MovementParams } from 'models';
 const END_POINT = 'movements'
 class MovementService {
 
@@ -17,7 +17,7 @@ class MovementService {
     });
   }
 
-  static save = (form: Movement): Promise<DefaultResponse> => {
+  static save = (form: MovementParams): Promise<DefaultResponse> => {
     return new Promise((resolve, reject) => {
       axios
       .post(END_POINT, form)

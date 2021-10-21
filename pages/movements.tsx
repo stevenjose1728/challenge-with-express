@@ -1,6 +1,6 @@
 import React from 'react'
 import { Movement, Team, User, MovementParams as Form } from 'models'
-import { quitLoading, setLoading, showError } from 'utils'
+import { quitLoading, setLoading, showError, showSuccess } from 'utils'
 import { MovementService, TeamService, UserService } from 'services'
 import { Button, Datepicker, Modal, Select, Table } from 'components'
 import moment from 'moment'
@@ -23,6 +23,11 @@ export default function movements() {
             const _movements = await MovementService.getAll()
             const _teams = await TeamService.getAll()
             const _users = await UserService.getAll()
+            const _form = {
+                ... IFormState,
+                userId: _users?.[0]?.id || 0,
+                teamId: _teams?.[0]?.id || 0
+            }
             setMovements(_movements)
             setTeams(_teams)
             setUsers(_users)
@@ -53,6 +58,23 @@ export default function movements() {
     const handleDelete = (element: Movement) => {
         console.log('>>: delete > ')
     }
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        try {
+            if(!form.userId || !form.teamId){
+                showSuccess('Debe llenar el campo de usuario y equipo')
+            }else{
+                setLoading()
+                const res = await MovementService.save(form)
+                handleClose()
+                showSuccess(res.message)
+            }
+        } catch (error) {
+            showError()
+        }finally{
+            quitLoading()
+        }
+    }
     return (
         <>
             <Modal
@@ -60,60 +82,64 @@ export default function movements() {
                 visible={visible}
                 title="Crear/Editar movimiento"
             >
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-6 col-sm-12">
-                            <Select
-                                name="userId"
-                                value={form.userId}
-                                options={users.map(element => {
-                                    return{
-                                        label: element.name,
-                                        value: element.id || ''
-                                    }
-                                })}
-                                label="Usuario"
-                                onChange={(value: string) => handleChange('userId', parseInt(value))}
-                            />
+                <form
+                    onSubmit={handleSubmit}
+                >
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-6 col-sm-12">
+                                <Select
+                                    name="userId"
+                                    value={form.userId}
+                                    options={users.map(element => {
+                                        return{
+                                            label: element.name,
+                                            value: element.id || ''
+                                        }
+                                    })}
+                                    label="Usuario"
+                                    onChange={(value: string) => handleChange('userId', parseInt(value))}
+                                />
+                            </div>
+                            <div className="col-md-6 col-sm-12">
+                                <Select
+                                    name="teamId"
+                                    value={form.teamId}
+                                    options={teams.map(element => {
+                                        return{
+                                            label: element.name,
+                                            value: element.id || ''
+                                        }
+                                    })}
+                                    label="Equipo"
+                                    onChange={(value: string) => handleChange('teamId', parseInt(value))}
+                                />
+                            </div>
+                            <div className="col-md-6 col-sm-12">
+                                <Datepicker
+                                    onChange={(value: Date) => handleChange('since', value)}
+                                    value={form.since}
+                                    labelColor="text-dark"
+                                    label="Desde"
+                                    minDate={moment().toDate()}
+                                />
+                            </div>
+                            <div className="col-md-6 col-sm-12">
+                                <Datepicker
+                                    onChange={(value: Date) => handleChange('until', value)}
+                                    value={form.until}
+                                    label="Hasta"
+                                    labelColor="text-dark"
+                                    minDate={moment().toDate()}
+                                />
+                            </div>
                         </div>
-                        <div className="col-md-6 col-sm-12">
-                            <Select
-                                name="teamId"
-                                value={form.teamId}
-                                options={teams.map(element => {
-                                    return{
-                                        label: element.name,
-                                        value: element.id || ''
-                                    }
-                                })}
-                                label="Equipo"
-                                onChange={(value: string) => handleChange('teamId', parseInt(value))}
-                            />
-                        </div>
-                        <div className="col-md-6 col-sm-12">
-                            <Datepicker
-                                onChange={(value: Date) => handleChange('since', value)}
-                                value={form.since}
-                                labelColor="text-dark"
-                                label="Desde"
-                                minDate={moment().toDate()}
-                            />
-                        </div>
-                        <div className="col-md-6 col-sm-12">
-                            <Datepicker
-                                onChange={(value: Date) => handleChange('until', value)}
-                                value={form.until}
-                                label="Hasta"
-                                labelColor="text-dark"
-                                minDate={moment().toDate()}
-                            />
-                        </div>
+                        <Button
+                            label="Guardar"
+                            type="submit"
+                        />
                     </div>
-                    <Button
-                        label="Guardar"
-                        type="submit"
-                    />
-                </div>
+                </form>
             </Modal>
             <Table
                 header={
