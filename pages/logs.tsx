@@ -27,7 +27,7 @@ export default function logs() {
                 ['#', 'Acciones']
             }
             data={logs.length}
-            title="Equipos"
+            title="Logs"
         >
             {
                 logs?.map((element, i) => {
