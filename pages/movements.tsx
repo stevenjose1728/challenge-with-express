@@ -53,7 +53,16 @@ export default function movements() {
         setForm(_form)
     }
     const handleEdit = (element: Movement) => {
-        console.log('>>: edit')
+        const _form: Form = {
+            ... IFormState,
+            userId: element.userId,
+            teamId: element.teamId,
+            since: moment(element.since).toDate(),
+            until: moment(element.until).toDate(),
+            id: element.id
+        }
+        setForm(_form)
+        setVisible(true)
     }
     const handleDelete = (element: Movement) => {
         console.log('>>: delete > ')
@@ -65,9 +74,17 @@ export default function movements() {
                 showSuccess('Debe llenar el campo de usuario y equipo')
             }else{
                 setLoading()
-                const res = await MovementService.save(form)
+                let msg = ''
+                console.log('>>: form > ', form)
+                if(!form.id){
+                    const res = await MovementService.save(form)
+                    msg = res.message
+                }else{
+                    const update = await MovementService.update(form)
+                    msg = update.message
+                }
+                showSuccess(msg)
                 handleClose()
-                showSuccess(res.message)
             }
         } catch (error) {
             showError()

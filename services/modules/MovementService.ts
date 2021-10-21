@@ -30,7 +30,7 @@ class MovementService {
     });
   }
 
-  static update = (form: Movement): Promise<DefaultResponse> => {
+  static update = (form: MovementParams): Promise<DefaultResponse> => {
     return new Promise((resolve, reject) => {
       axios
       .patch(END_POINT, form)
