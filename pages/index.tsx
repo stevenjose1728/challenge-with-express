@@ -64,7 +64,7 @@ const Home: NextPage = () => {
     try {
       setLoading()
       let msg = ''
-      if(!!!user?.isAdmin){
+      if(!user?.isAdmin){
         let _form = {
           ... form
         }
@@ -80,16 +80,13 @@ const Home: NextPage = () => {
         })
         msg = editUser.message
       }else{
-        switch (!!user?.isAdmin) {
-          case true:
-            const edit = await UserService.update(form)
-            msg = edit.message
-            break;
-
-          default:
-            const res = await UserService.create(form)
-            msg = res.message
-            break;
+        console.log(form)
+        if(!form.id){
+          const res = await UserService.create(form)
+          msg = res.message
+        }else{
+          const edit = await UserService.update(form)
+          msg = edit.message
         }
       }
       showSuccess(msg)
