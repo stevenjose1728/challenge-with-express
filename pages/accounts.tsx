@@ -37,7 +37,6 @@ export default function accounts() {
             setLoading()
             if(element.id){
                 const res = await AccountService.delete(element.id)
-                console.log('>>: res > ', res)
                 showSuccess(res.message)
             }
         } catch (error) {
@@ -45,7 +44,6 @@ export default function accounts() {
         }finally{
             quitLoading()
         }
-        console.log('>>: handleDelete > ', element)
     }
     const load = async () => {
         try {
